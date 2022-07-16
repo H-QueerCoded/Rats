@@ -33,9 +33,6 @@ minecraft {
 
 repositories {
     mavenCentral()
- maven {
-    url = "https://maven.mcmoddev.com/"
-  }
   maven {
     name = "Mobius Repo"
     url = "http://tehnut.info/maven"
@@ -48,11 +45,6 @@ repositories {
         name "Jared"
         url "http://maven.blamejared.com/"
   }
-  maven {
-    name = "gegy1000"
-    url = "https://maven.gegy1000.net"
-  }
-  
     maven {
         // location of the maven that hosts JEI files
         name = "Progwml6 maven"

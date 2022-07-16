@@ -60,14 +60,12 @@ public class TileEntityRatCageBreedingLantern extends TileEntityRatCageDecorated
                     }
                 }
                 if (breedableRats.size() > 1) {
-                    EntityRat parent1 = breedableRats.get(0);
+                    EntityRat parent1 = breedableRats.get(breedableRats.size() - 1);
+                    breedableRats.remove(parent1);
                     EntityRat parent2 = breedableRats.get(breedableRats.size() - 1);
-                    if (breedableRats.size() > 2) {
-                        parent1 = breedableRats.get(random.nextInt(breedableRats.size() - 2));
-                    }
                     parent1.world.setEntityState(parent1, (byte) 83);
                     parent2.world.setEntityState(parent2, (byte) 83);
-                    parent2.createBabiesFrom(parent2, parent1);
+                    parent2.createBabiesFrom(parent1, parent2);
                     breedingCooldown = 24000;
                     parent1.breedCooldown = 24000;
                     parent2.breedCooldown = 24000;
