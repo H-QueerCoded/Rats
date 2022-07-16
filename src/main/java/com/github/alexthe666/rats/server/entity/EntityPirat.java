@@ -121,7 +121,6 @@ public class EntityPirat extends EntityRat implements IRangedAttackMob, IRatlant
     @Nullable
     public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
         livingdata = super.onInitialSpawn(difficulty, livingdata);
-        this.setMale(this.getRNG().nextBoolean());
         this.setPlague(false);
         this.setToga(false);
         this.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(RatsItemRegistry.PIRAT_CUTLASS));

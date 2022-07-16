@@ -53,32 +53,24 @@ public class TileEntityRatCageBreedingLantern extends TileEntityRatCageDecorated
             double d0 = 1.5F;
             List<EntityRat> rats = world.getEntitiesWithinAABB(EntityRat.class, new AxisAlignedBB((double) i - d0, (double) j - d0, (double) k - d0, (double) i + d0, (double) j + d0, (double) k + d0));
             if (rats.size() < RatsMod.CONFIG_OPTIONS.ratCageCramming && rats.size() > 0) {
-                List<EntityRat> males = new ArrayList<>();
-                List<EntityRat> females = new ArrayList<>();
+                List<EntityRat> breedableRats = new ArrayList<>();
                 for (EntityRat rat : rats) {
                     if (!rat.isChild() && rat.isInCage() && rat.breedCooldown == 0) {
-                        if (rat.isMale()) {
-                            males.add(rat);
-                        } else {
-                            females.add(rat);
-                        }
+                    	breedableRats.add(rat);
                     }
                 }
-                if (males.size() > 0 && females.size() > 0) {
-                    EntityRat male = males.get(0);
-                    EntityRat female = females.get(0);
-                    if (males.size() > 1) {
-                        male = males.get(random.nextInt(males.size() - 1));
+                if (breedableRats.size() > 1) {
+                    EntityRat parent1 = breedableRats.get(0);
+                    EntityRat parent2 = breedableRats.get(breedableRats.size() - 1);
+                    if (breedableRats.size() > 2) {
+                        parent1 = breedableRats.get(random.nextInt(breedableRats.size() - 2));
                     }
-                    if (females.size() > 1) {
-                        female = females.get(random.nextInt(females.size() - 1));
-                    }
-                    male.world.setEntityState(male, (byte) 83);
-                    female.world.setEntityState(female, (byte) 83);
-                    female.createBabiesFrom(female, male);
+                    parent1.world.setEntityState(parent1, (byte) 83);
+                    parent2.world.setEntityState(parent2, (byte) 83);
+                    parent2.createBabiesFrom(parent2, parent1);
                     breedingCooldown = 24000;
-                    male.breedCooldown = 24000;
-                    female.breedCooldown = 24000;
+                    parent1.breedCooldown = 24000;
+                    parent2.breedCooldown = 24000;
                 }
             }
         } else {

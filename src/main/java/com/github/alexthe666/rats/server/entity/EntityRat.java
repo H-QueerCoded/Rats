@@ -81,7 +81,6 @@ public class EntityRat extends EntityTameable implements IAnimatedEntity {
     public static final ResourceLocation LOOT = LootTableList.register(new ResourceLocation("rats", "rat"));
     public static final ResourceLocation CHRISTMAS_LOOT = LootTableList.register(new ResourceLocation("rats", "christmas_rat_gifts"));
     protected static final DataParameter<Optional<UUID>> MONSTER_OWNER_UNIQUE_ID = EntityDataManager.createKey(EntityRat.class, DataSerializers.OPTIONAL_UNIQUE_ID);
-    private static final DataParameter<Boolean> IS_MALE = EntityDataManager.createKey(EntityRat.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> TOGA = EntityDataManager.createKey(EntityRat.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> PLAGUE = EntityDataManager.createKey(EntityRat.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> VISUAL_FLAG = EntityDataManager.createKey(EntityRat.class, DataSerializers.BOOLEAN);
@@ -445,7 +444,6 @@ public class EntityRat extends EntityTameable implements IAnimatedEntity {
     @Override
     protected void entityInit() {
         super.entityInit();
-        this.dataManager.register(IS_MALE, Boolean.valueOf(false));
         this.dataManager.register(TOGA, Boolean.valueOf(false));
         this.dataManager.register(PLAGUE, Boolean.valueOf(false));
         this.dataManager.register(VISUAL_FLAG, Boolean.valueOf(false));
@@ -535,7 +533,6 @@ public class EntityRat extends EntityTameable implements IAnimatedEntity {
         compound.setBoolean("Dancing", this.isDancing());
         compound.setBoolean("Toga", this.hasToga());
         compound.setBoolean("OwnerMonster", this.isOwnerMonster());
-        compound.setBoolean("IsMale", this.isMale());
         compound.setInteger("WildTrust", wildTrust);
         if (ratInventory != null) {
             NBTTagList nbttaglist = new NBTTagList();
@@ -609,7 +606,6 @@ public class EntityRat extends EntityTameable implements IAnimatedEntity {
         this.setDancing(compound.getBoolean("Dancing"));
         this.setVisualFlag(compound.getBoolean("VisualFlag"));
         this.setToga(compound.getBoolean("Toga"));
-        this.setMale(compound.getBoolean("IsMale"));
         this.setOwnerMonster(compound.getBoolean("OwnerMonster"));
         this.setColorVariant(compound.getInteger("ColorVariant"));
         if (ratInventory != null) {
@@ -721,14 +717,6 @@ public class EntityRat extends EntityTameable implements IAnimatedEntity {
 
     public boolean hasPlague() {
         return this.dataManager.get(PLAGUE).booleanValue();
-    }
-
-    public boolean isMale() {
-        return this.dataManager.get(IS_MALE).booleanValue();
-    }
-
-    public void setMale(boolean male) {
-        this.dataManager.set(IS_MALE, Boolean.valueOf(male));
     }
 
     public boolean getVisualFlag() {
@@ -1433,12 +1421,11 @@ public class EntityRat extends EntityTameable implements IAnimatedEntity {
         return !this.hasUpgrade(RatsItemRegistry.RAT_UPGRADE_PLATTER) && !this.hasUpgrade(RatsItemRegistry.RAT_UPGRADE_LUMBERJACK) && !this.hasUpgrade(RatsItemRegistry.RAT_UPGRADE_MINER) && !this.hasUpgrade(RatsItemRegistry.RAT_UPGRADE_FARMER) && !this.hasUpgrade(RatsItemRegistry.RAT_UPGRADE_FISHERMAN) && !this.hasUpgrade(RatsItemRegistry.RAT_UPGRADE_CHRISTMAS);
     }
 
-    public void createBabiesFrom(EntityRat mother, EntityRat father) {
+    public void createBabiesFrom(EntityRat parent1, EntityRat parent2) {
         for (int i = 0; i < 1; i++) {
             EntityRat baby = new EntityRat(this.world);
-            baby.setMale(this.rand.nextBoolean());
             int babyColor = 0;
-            if (father.getColorVariant() <= 3 && mother.getColorVariant() <= 3) {
+            if (parent2.getColorVariant() <= 3 && parent1.getColorVariant() <= 3) {
                 if (rand.nextInt(6) == 0) {
                     babyColor = 4 + rand.nextInt(RAT_TEXTURES.length - 5);
                 } else {
@@ -1448,15 +1435,15 @@ public class EntityRat extends EntityTameable implements IAnimatedEntity {
                 babyColor = rand.nextInt(RAT_TEXTURES.length);
             }
             baby.setColorVariant(babyColor);
-            baby.setPosition(mother.posX, mother.posY, mother.posZ);
+            baby.setPosition(parent1.posX, parent1.posY, parent1.posZ);
             baby.setGrowingAge(-24000);
-            if (mother.isTamed()) {
+            if (parent1.isTamed()) {
                 baby.setTamed(true);
-                baby.setOwnerId(mother.getOwnerId());
+                baby.setOwnerId(parent1.getOwnerId());
                 baby.setOwnerMonster(false);
-            } else if (father.isTamed()) {
+            } else if (parent2.isTamed()) {
                 baby.setTamed(true);
-                baby.setOwnerId(father.getOwnerId());
+                baby.setOwnerId(parent2.getOwnerId());
                 baby.setOwnerMonster(false);
             }
             world.spawnEntity(baby);
@@ -2260,7 +2247,6 @@ public class EntityRat extends EntityTameable implements IAnimatedEntity {
     public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
         livingdata = super.onInitialSpawn(difficulty, livingdata);
         this.setColorVariant(this.getRNG().nextInt(4));
-        this.setMale(this.getRNG().nextBoolean());
         if (this.getRNG().nextInt(15) == 0 && this.world.getDifficulty() != EnumDifficulty.PEACEFUL && RatsMod.CONFIG_OPTIONS.plagueRats) {
             this.setPlague(true);
         }

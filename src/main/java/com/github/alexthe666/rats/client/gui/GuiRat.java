@@ -152,8 +152,6 @@ public class GuiRat extends GuiContainer {
         this.mc.getTextureManager().bindTexture(TEXTURE);
         GlStateManager.translate(0.0F, 0.0F, 65.0F);
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
-        this.drawTexturedModalRect(k + 9, l + 20, rat.isMale() ? 176 : 192, 0, 16, height);
-
     }
 
     @Override
