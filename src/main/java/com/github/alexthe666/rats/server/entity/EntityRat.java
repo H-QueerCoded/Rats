@@ -70,6 +70,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class EntityRat extends EntityTameable implements IAnimatedEntity {
 
@@ -1560,13 +1561,10 @@ public class EntityRat extends EntityTameable implements IAnimatedEntity {
         if (heldItem.isItemEnchantable() && !disenchant && !heldItem.isItemEnchanted()) {
             burntItem = heldItem.copy();
         }
-        if (disenchant && heldItem.isItemEnchanted()) {
+        if (disenchant && heldItem.isItemEnchanted() && EnchantmentHelper.getEnchantments(heldItem).entrySet().stream().filter(ent -> !ent.getKey().isCurse()).count()>0) {
             burntItem = heldItem.copy();
-            if (burntItem.getTagCompound() != null && burntItem.getTagCompound().hasKey("ench", 9)) {
-                if (!burntItem.getTagCompound().getTagList("ench", 10).isEmpty()) {
-                    burntItem.getTagCompound().setTag("ench", new NBTTagCompound());
-                }
-            }
+            EnchantmentHelper.setEnchantments(EnchantmentHelper.getEnchantments(burntItem).entrySet().stream().filter(ent -> ent.getKey().isCurse()).collect(Collectors.toMap(ent -> ent.getKey(), ent -> ent.getValue())), burntItem);
+            burntItem.setRepairCost(0);
         }
         if (burntItem.isEmpty()) {
             cookingProgress = 0;
