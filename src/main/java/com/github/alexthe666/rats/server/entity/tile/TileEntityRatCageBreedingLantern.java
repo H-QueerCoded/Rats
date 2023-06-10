@@ -10,6 +10,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -60,9 +61,9 @@ public class TileEntityRatCageBreedingLantern extends TileEntityRatCageDecorated
                     }
                 }
                 if (breedableRats.size() > 1) {
-                    EntityRat parent1 = breedableRats.get(random.nextInt(breedableRats.size() - 1));
-                    breedableRats.remove(parent1);
-                    EntityRat parent2 = (breedableRats.size() > 1) ? breedableRats.get(random.nextInt(breedableRats.size() - 1)) : breedableRats.get(0);
+                	Collections.shuffle(breedableRats);
+                    EntityRat parent1 = breedableRats.remove(0);
+                    EntityRat parent2 = breedableRats.remove(0);
                     parent1.world.setEntityState(parent1, (byte) 83);
                     parent2.world.setEntityState(parent2, (byte) 83);
                     parent2.createBabiesFrom(parent1, parent2);
