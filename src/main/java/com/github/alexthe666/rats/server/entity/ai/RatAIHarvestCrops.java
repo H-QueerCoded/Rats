@@ -1,6 +1,8 @@
 package com.github.alexthe666.rats.server.entity.ai;
 
 import com.github.alexthe666.rats.RatsMod;
+import com.github.alexthe666.rats.server.compat.crops.CropHandler;
+import com.github.alexthe666.rats.server.compat.crops.ModdedCrops;
 import com.github.alexthe666.rats.server.entity.EntityRat;
 import com.github.alexthe666.rats.server.entity.RatCommand;
 import com.github.alexthe666.rats.server.items.RatsItemRegistry;
@@ -52,9 +54,14 @@ public class RatAIHarvestCrops extends EntityAIBase {
     private void resetTarget() {
         List<BlockPos> allBlocks = new ArrayList<>();
         int RADIUS = this.entity.getSearchRadius();
+        cropSearch:
         for (BlockPos pos : BlockPos.getAllInBox(this.entity.getSearchCenter().add(-RADIUS, -RADIUS, -RADIUS), this.entity.getSearchCenter().add(RADIUS, RADIUS, RADIUS))) {
             IBlockState block = this.entity.world.getBlockState(pos);
             if ((block.getBlock() instanceof BlockCrops && ((BlockCrops) block.getBlock()).isMaxAge(block) || !(block.getBlock() instanceof BlockCrops) && block.getBlock() instanceof BlockBush || block.getMaterial() == Material.GOURD) && !(block.getBlock() instanceof BlockStem)) {
+            	for (CropHandler c : ModdedCrops.cropList) {
+					if(block.getBlock() == c.getBlock() && !c.isFullyGrown(this.entity.world, pos, block))
+						continue cropSearch;
+				}
                 Item item = block.getBlock().getItemDropped(block, entity.getRNG(), 0);
                 if(entity.canRatPickupItem(new ItemStack(item))){
                     allBlocks.add(pos);
@@ -95,7 +102,7 @@ public class RatAIHarvestCrops extends EntityAIBase {
                     block.getBlock().getDrops(drops, this.entity.world, targetBlock, block, 0);
 
                     this.entity.world.destroyBlock(targetBlock, false);
-                    if ((!RatsMod.CONFIG_OPTIONS.ratsBreakBlockOnHarvest || entity.hasUpgrade(RatsItemRegistry.RAT_UPGRADE_REPLANTER)) && block.getBlock() instanceof BlockCrops) {
+                    if ((!RatsMod.CONFIG_OPTIONS.ratsBreakBlockOnHarvest || entity.hasUpgrade(RatsItemRegistry.RAT_UPGRADE_REPLANTER)) && block.getBlock() instanceof BlockCrops || ModdedCrops.cropList.stream().anyMatch( c -> c.getBlock()==block.getBlock() )) {
                         for (int i = 0; i < drops.size(); ++i) {
                             if (isPlantabe(drops.get(i).getItem())) {
                                 if (drops.get(i).getCount() == 1)
@@ -105,6 +112,7 @@ public class RatAIHarvestCrops extends EntityAIBase {
                                 this.entity.world.setBlockState(targetBlock, block.getBlock().getDefaultState());
                             }
                         }
+                        ModdedCrops.cropList.stream().filter( c -> c.getBlock()==block.getBlock() && c.isSpecialReplantCase()).forEach( r -> r.replant(this.entity.world, targetBlock, block, drops));
                     }
 
                     if (!drops.isEmpty() && entity.canRatPickupItem(drops.get(0))) {

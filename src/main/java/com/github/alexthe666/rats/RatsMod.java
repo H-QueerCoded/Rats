@@ -4,6 +4,7 @@ import com.github.alexthe666.rats.server.CommonProxy;
 import com.github.alexthe666.rats.server.advancements.RatsAdvancementRegistry;
 import com.github.alexthe666.rats.server.compat.ChiselCompatBridge;
 import com.github.alexthe666.rats.server.compat.CraftTweakerCompatBridge;
+import com.github.alexthe666.rats.server.compat.ImmersiveEngineeringCompatBridge;
 import com.github.alexthe666.rats.server.compat.ThaumcraftCompatBridge;
 import com.github.alexthe666.rats.server.compat.TinkersCompatBridge;
 import com.github.alexthe666.rats.server.entity.EntityIllagerPiper;
@@ -30,6 +31,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Loader;
@@ -41,6 +43,8 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -111,6 +115,7 @@ public class RatsMod {
         CraftTweakerCompatBridge.loadTweakerCompat();
         TinkersCompatBridge.loadTinkersCompat();
         ThaumcraftCompatBridge.loadThaumcraftCompat();
+        ImmersiveEngineeringCompatBridge.loadImmersiveEngineeringCompat();
         iafLoaded = Loader.isModLoaded("iceandfire");
     }
 
@@ -138,7 +143,7 @@ public class RatsMod {
         RatsNuggetRegistry.init();
         TinkersCompatBridge.loadTinkersPostInitCompat();
         if (RatsMod.CONFIG_OPTIONS.spawnRats) {
-            for (Biome biome : Biome.REGISTRY) {
+            for (Biome biome : ForgeRegistries.BIOMES) {
                 if(!BiomeDictionary.hasType(biome, BiomeDictionary.Type.MUSHROOM)) {
                     if (biome != null && !BiomeDictionary.hasType(biome, BiomeDictionary.Type.END) && !BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER)) {
                         List<Biome.SpawnListEntry> spawnList = RatsMod.CONFIG_OPTIONS.ratsSpawnLikeMonsters ? biome.getSpawnableList(EnumCreatureType.MONSTER) : biome.getSpawnableList(EnumCreatureType.CREATURE);
@@ -148,7 +153,7 @@ public class RatsMod {
             }
         }
         if (RatsMod.CONFIG_OPTIONS.spawnPiper) {
-            for (Biome biome : Biome.REGISTRY) {
+            for (Biome biome : ForgeRegistries.BIOMES) {
                 if (biome != null && !BiomeDictionary.hasType(biome, BiomeDictionary.Type.END) && !BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER)) {
                     List<Biome.SpawnListEntry> spawnList = biome.getSpawnableList(EnumCreatureType.MONSTER);
                     if(!spawnList.isEmpty() && !BiomeDictionary.hasType(biome, BiomeDictionary.Type.MUSHROOM)){
