@@ -1561,7 +1561,7 @@ public class EntityRat extends EntityTameable implements IAnimatedEntity {
         if (heldItem.isItemEnchantable() && !disenchant && !heldItem.isItemEnchanted()) {
             burntItem = heldItem.copy();
         }
-        if (disenchant && heldItem.isItemEnchanted() && EnchantmentHelper.getEnchantments(heldItem).entrySet().stream().filter(ent -> !ent.getKey().isCurse()).count()>0) {
+        if (disenchant && heldItem.isItemEnchanted() && EnchantmentHelper.getEnchantments(heldItem).entrySet().stream().anyMatch(ent -> !ent.getKey().isCurse())) {
             burntItem = heldItem.copy();
             EnchantmentHelper.setEnchantments(EnchantmentHelper.getEnchantments(burntItem).entrySet().stream().filter(ent -> ent.getKey().isCurse()).collect(Collectors.toMap(ent -> ent.getKey(), ent -> ent.getValue())), burntItem);
             burntItem.setRepairCost(0);
