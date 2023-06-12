@@ -5,6 +5,7 @@ import com.github.alexthe666.rats.server.advancements.RatsAdvancementRegistry;
 import com.github.alexthe666.rats.server.compat.ChiselCompatBridge;
 import com.github.alexthe666.rats.server.compat.CraftTweakerCompatBridge;
 import com.github.alexthe666.rats.server.compat.ImmersiveEngineeringCompatBridge;
+import com.github.alexthe666.rats.server.compat.SimpleCornCompatBridge;
 import com.github.alexthe666.rats.server.compat.ThaumcraftCompatBridge;
 import com.github.alexthe666.rats.server.compat.TinkersCompatBridge;
 import com.github.alexthe666.rats.server.entity.EntityIllagerPiper;
@@ -116,6 +117,7 @@ public class RatsMod {
         TinkersCompatBridge.loadTinkersCompat();
         ThaumcraftCompatBridge.loadThaumcraftCompat();
         ImmersiveEngineeringCompatBridge.loadImmersiveEngineeringCompat();
+        SimpleCornCompatBridge.loadCornCompat();
         iafLoaded = Loader.isModLoaded("iceandfire");
     }
 
