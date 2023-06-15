@@ -67,7 +67,32 @@ public class RatAIWander extends EntityAIWanderAvoidWater {
     }
 
     public boolean shouldExecute() {
-        return shouldRatAIExecute() && super.shouldExecute();
+        if(shouldRatAIExecute()) {
+        	if (!this.mustUpdate)
+            {
+                if (this.entity.getRNG().nextInt(this.executionChance) != 0)
+                {
+                    return false;
+                }
+            }
+
+            Vec3d vec3d = this.getPosition();
+
+            if (vec3d == null)
+            {
+                return false;
+            }
+            else
+            {
+                this.x = vec3d.x;
+                this.y = vec3d.y;
+                this.z = vec3d.z;
+                this.mustUpdate = false;
+                return true;
+            }
+        }
+        else return false;
+        
     }
 
     private boolean shouldRatAIExecute() {
